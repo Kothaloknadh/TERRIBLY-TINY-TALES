@@ -1,0 +1,3 @@
+The above code defines a React functional component App that renders a Submit button. When the button is clicked, the fetchData function is called, which uses the fetch API to retrieve the contents of the test.txt file. The contents are split into words and a frequency map is created to count the occurrences of each word. The top 20 words by frequency are then extracted and used to create a histogram data array.
+
+The histogramData state variable is updated with the histogram data array, and the component re-renders. If histogramData has any length, the component renders an Export button and the histogram data. When the Export button is clicked, the exportData function is called, which converts the histogram data into a CSV string and creates a downloadable CSV file.
