@@ -1,0 +1,60 @@
+import React, { useState } from 'react';
+
+const App = () => {
+  const [histogramData, setHistogramData] = useState([]);
+
+  const fetchData = async () => {
+    const response = await fetch('https://www.terriblytinytales.com/test.txt');
+    const data = await response.text();
+    const words = data.split(/\s+/);
+    const frequencyMap = {};
+    words.forEach(word => {
+      if (!frequencyMap[word]) {
+        frequencyMap[word] = 0;
+      }
+      frequencyMap[word]++;
+    });
+    const sortedWords = Object.keys(frequencyMap).sort((a, b) => frequencyMap[b] - frequencyMap[a]);
+    const top20Words = sortedWords.slice(0, 20);
+    const histogramData = top20Words.map(word => ({
+      word,
+      frequency: frequencyMap[word],
+    }));
+    setHistogramData(histogramData);
+  };
+
+  const exportData = () => {
+    const csv = histogramData.map(row => `${row.word},${row.frequency}`).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    if (link.download !== undefined) {
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', 'histogram.csv');
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
+
+  return (
+    <div>
+      <button onClick={fetchData}>Submit</button>
+      {histogramData.length > 0 && (
+        <div>
+          <button onClick={exportData}>Export</button>
+          <div>
+            {histogramData.map(row => (
+              <div key={row.word}>
+                {row.word}: {row.frequency}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default App;
